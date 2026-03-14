@@ -11,6 +11,25 @@ function isValidGdriveUrl(url: string): boolean {
   return url.includes("drive.google.com");
 }
 
+function copyToClipboard(text: string): Promise<void> {
+  return new Promise((resolve, reject) => {
+    const textarea = document.createElement("textarea");
+    textarea.value = text;
+    textarea.style.position = "fixed";
+    textarea.style.opacity = "0";
+    document.body.appendChild(textarea);
+    textarea.select();
+    try {
+      document.execCommand("copy");
+      resolve();
+    } catch (err) {
+      reject(err);
+    } finally {
+      document.body.removeChild(textarea);
+    }
+  });
+}
+
 export default function Home() {
   const [inputUrl, setInputUrl] = useState("");
   const [outputUrl, setOutputUrl] = useState("");
@@ -42,9 +61,13 @@ export default function Home() {
 
   const handleOutputClick = useCallback(async () => {
     if (!outputUrl) return;
-    await navigator.clipboard.writeText(outputUrl);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
+    try {
+      await copyToClipboard(outputUrl);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch {
+      // Fallback failed
+    }
   }, [outputUrl]);
 
   const handleKeyDown = useCallback(
