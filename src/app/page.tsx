@@ -40,7 +40,7 @@ export default function Home() {
     setOutputUrl(`https://drive.google.com/uc?export=download&id=${fileId}`);
   }, [inputUrl]);
 
-  const handleCopy = useCallback(async () => {
+  const handleOutputClick = useCallback(async () => {
     if (!outputUrl) return;
     await navigator.clipboard.writeText(outputUrl);
     setCopied(true);
@@ -95,22 +95,15 @@ export default function Home() {
           {outputUrl && (
             <div className="mt-6">
               <label className="block text-sm text-neutral-400 mb-2">
-                Direct Download Link
+                Direct Download Link {copied && <span className="text-green-400">(Copied!)</span>}
               </label>
-              <div className="flex gap-2">
-                <input
-                  type="text"
-                  value={outputUrl}
-                  readOnly
-                  className="flex-1 px-4 py-3 bg-neutral-800 border border-neutral-700 rounded-lg text-neutral-100 focus:outline-none"
-                />
-                <button
-                  onClick={handleCopy}
-                  className="px-4 py-3 bg-neutral-700 hover:bg-neutral-600 text-neutral-100 font-medium rounded-lg transition-colors min-w-[100px]"
-                >
-                  {copied ? "Copied!" : "Copy"}
-                </button>
-              </div>
+              <input
+                type="text"
+                value={outputUrl}
+                readOnly
+                onClick={handleOutputClick}
+                className="w-full px-4 py-3 bg-neutral-800 border border-neutral-700 rounded-lg text-neutral-100 focus:outline-none cursor-pointer hover:border-blue-500 transition-colors"
+              />
             </div>
           )}
 
